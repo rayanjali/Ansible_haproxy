@@ -1,0 +1,36 @@
+- hosts: myweb
+  tasks:
+  - name: "install httpd rpm"
+    package:
+      name: "httpd"
+      state: "present"
+  - copy:
+      dest: "/var/www/html/index.html"
+      content: "for lb testing !!"
+  - name: "disable firewalld"
+    service:
+      name: "firewalld"
+      state: "stopped"
+      enabled: "false"
+  - service:
+      name: "httpd"
+      state: "started"
+
+- hosts: mylb
+  tasks:
+  - name: "install LB software"
+    package:
+      name: "haproxy"
+      state: "present"
+  - name: "Disable firewalld"
+    service:
+      name: "firewalld"
+      state: "stopped"
+      enabled: "false"
+  - template:
+      dest: "/etc/haproxy/haproxy.cfg"
+      src: "/etc/haproxy/haproxy.cfg"
+  - service:
+      name: "haproxy"
+      state: "started"
+
